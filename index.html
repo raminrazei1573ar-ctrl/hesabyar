@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حساب‌یار</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#222}
+header{background:#146c94;color:white;padding:18px;text-align:center}
+header h1{margin:0;font-size:28px}
+nav{display:flex;gap:8px;padding:12px;background:white;box-shadow:0 2px 8px #ccc;overflow:auto}
+nav button{border:0;background:#e8f1f5;padding:12px 18px;border-radius:8px;white-space:nowrap}
+main{padding:18px;max-width:1000px;margin:auto}
+.card{background:white;padding:20px;border-radius:14px;margin-bottom:15px;box-shadow:0 2px 8px #ddd}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+input,select{width:100%;padding:13px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button.primary{background:#146c94;color:white;border:0;padding:13px 22px;border-radius:8px;font-size:16px;margin-top:12px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:right}
+.stat{font-size:25px;font-weight:bold;color:#146c94}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>حساب‌یار</h1>
+<p>سیستم حسابداری آنلاین</p>
+</header>
+
+<nav>
+<button onclick="show('home')">داشبورد</button>
+<button onclick="show('customers')">مشتریان</button>
+<button onclick="show('sales')">فروش</button>
+<button onclick="show('purchases')">خرید</button>
+<button onclick="show('reports')">گزارشات</button>
+</nav>
+
+<main id="app"></main>
+
+<script>
+const data={
+customers:JSON.parse(localStorage.customers||'[]'),
+sales:JSON.parse(localStorage.sales||'[]')
+};
+
+function save(){
+localStorage.customers=JSON.stringify(data.customers);
+localStorage.sales=JSON.stringify(data.sales);
+}
+
+function show(page){
+let h='';
+if(page==='home'){
+h=`<div class="card"><h2>داشبورد حساب‌یار</h2>
+<div class="grid">
+<div class="card"><div>تعداد مشتریان</div><div class="stat">${data.customers.length}</div></div>
+<div class="card"><div>تعداد فروش</div><div class="stat">${data.sales.length}</div></div>
+</div></div>`;
+}
+if(page==='customers'){
+h=`<div class="card"><h2>ثبت مشتری</h2>
+<div class="grid">
+<input id="name" placeholder="نام مشتری">
+<input id="phone" placeholder="شماره تلفن">
+</div>
+<button class="primary" onclick="addCustomer()">ثبت مشتری</button>
+</div>
+<div class="card"><h2>لیست مشتریان</h2>
+<table><tr><th>نام</th><th>تلفن</th></tr>
+${data.customers.map(x=>`<tr><td>${x.name}</td><td>${x.phone}</td></tr>`).join('')}
+</table></div>`;
+}
+if(page==='sales'){
+h=`<div class="card"><h2>ثبت فروش</h2>
+<div class="grid">
+<input id="customer" placeholder="نام مشتری">
+<input id="amount" type="number" placeholder="مبلغ">
+</div>
+<button class="primary" onclick="addSale()">ثبت فروش</button>
+</div>
+<div class="card"><h2>فروش‌ها</h2>
+<table><tr><th>مشتری</th><th>مبلغ</th></tr>
+${data.sales.map(x=>`<tr><td>${x.customer}</td><td>${x.amount}</td></tr>`).join('')}
+</table></div>`;
+}
+if(page==='purchases'){
+h=`<div class="card"><h2>خرید</h2><p>بخش ثبت خرید آماده است.</p></div>`;
+}
+if(page==='reports'){
+h=`<div class="card"><h2>گزارشات</h2>
+<p>مشتریان: ${data.customers.length}</p>
+<p>فروش‌ها: ${data.sales.length}</p>
+</div>`;
+}
+document.getElementById('app').innerHTML=h;
+}
+
+function addCustomer(){
+let name=document.getElementById('name').value;
+let phone=document.getElementById('phone').value;
+if(!name)return alert('نام مشتری را وارد کنید');
+data.customers.push({name,phone});
+save();show('customers');
+}
+
+function addSale(){
+let customer=document.getElementById('customer').value;
+let amount=document.getElementById('amount').value;
+if(!customer||!amount)return alert('اطلاعات فروش را کامل کنید');
+data.sales.push({customer,amount});
+save();show('sales');
+}
+
+show('home');
+</script>
+</body>
+</html>
