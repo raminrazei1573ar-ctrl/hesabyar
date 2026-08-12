@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حساب‌یار | سیستم حسابداری</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#f3f6f9;
+    color:#17202a;
+}
+
+header{
+    background:linear-gradient(135deg,#155e75,#1877d2);
+    color:#fff;
+    padding:28px 18px;
+    text-align:center;
+}
+
+header h1{
+    margin:0;
+    font-size:36px;
+}
+
+header p{
+    margin:10px 0 0;
+    font-size:16px;
+}
+
+nav{
+    background:#fff;
+    display:flex;
+    gap:8px;
+    padding:12px;
+    overflow-x:auto;
+    box-shadow:0 3px 15px #0002;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+nav button{
+    border:0;
+    background:#edf3f7;
+    color:#1769aa;
+    padding:12px 18px;
+    border-radius:12px;
+    font-size:15px;
+    white-space:nowrap;
+    cursor:pointer;
+}
+
+nav button.active{
+    background:#1877d2;
+    color:#fff;
+}
+
+main{
+    max-width:1200px;
+    margin:25px auto;
+    padding:0 15px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px #00000012;
+}
+
+.card h2{
+    margin-top:0;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:#fff;
+    padding:22px;
+    border-radius:18px;
+    box-shadow:0 4px 15px #0001;
+}
+
+.stat small{
+    color:#707b84;
+}
+
+.stat strong{
+    display:block;
+    color:#1877d2;
+    font-size:28px;
+    margin-top:10px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:14px;
+}
+
+form{
+    display:grid;
+    gap:14px;
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:13px;
+    border:1px solid #ccd6de;
+    border-radius:10px;
+    font-size:15px;
+    background:#fff;
+    outline:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#1877d2;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.btn{
+    border:0;
+    border-radius:10px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-size:15px;
+    color:#fff;
+    background:#1877d2;
+}
+
+.btn:hover{
+    opacity:.9;
+}
+
+.btn.success{
+    background:#159447;
+}
+
+.btn.danger{
+    background:#d63c3c;
+}
+
+.btn.gray{
+    background:#66717b;
+}
+
+.btn.warning{
+    background:#d88b00;
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+th,
+td{
+    border-bottom:1px solid #e5e9ed;
+    padding:12px;
+    text-align:right;
+}
+
+th{
+    background:#f1f5f8;
+}
+
+.empty{
+    text-align:center;
+    color:#777;
+    padding:30px;
+}
+
+.total{
+    font-size:24px;
+    font-weight:bold;
+    color:#159447;
+}
+
+.search{
+    margin-bottom:15px;
+}
+
+.search input{
+    max-width:450px;
+}
+
+.invoice-box{
+    background:#fff;
+    padding:30px;
+    border-radius:15px;
+}
+
+.invoice-head{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    border-bottom:2px solid #1877d2;
+    padding-bottom:20px;
+    margin-bottom:20px;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#eaf4ff;
+    color:#1877d2;
+    font-size:12px;
+}
+
+footer{
+    text-align:center;
+    padding:35px;
+    color:#777;
+}
+
+.toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#17202a;
+    color:white;
+    padding:14px 20px;
+    border-radius:12px;
+    display:none;
+    z-index:100;
+}
+
+@media(max-width:600px){
+    header h1{
+        font-size:29px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .stat strong{
+        font-size:22px;
+    }
+}
+
+@media print{
+    nav,
+    header,
+    footer,
+    .no-print{
+        display:none !important;
+    }
+
+    body{
+        background:white;
+    }
+
+    .page{
+        display:none !important;
+    }
+
+    #invoice{
+        display:block !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>حساب‌یار</h1>
+    <p>سیستم حسابداری و مدیریت مالی</p>
+</header>
+
+<nav>
+    <button class="active" onclick="showPage('dashboard',this)">🏠 داشبورد</button>
+    <button onclick="showPage('customers',this)">👥 مشتریان</button>
+    <button onclick="showPage('products',this)">📦 کالاها</button>
+    <button onclick="showPage('sales',this)">🧾 فروش</button>
+    <button onclick="showPage('purchases',this)">🛒 خرید</button>
+    <button onclick="showPage('expenses',this)">💸 هزینه‌ها</button>
+    <button onclick="showPage('reports',this)">📊 گزارشات</button>
+    <button onclick="showPage('invoice',this)">🖨️ فاکتور</button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+<div class="card">
+    <h2>داشبورد حساب‌یار</h2>
+    <p>خلاصه وضعیت مالی کسب‌وکار شما</p>
+</div>
+
+<div class="stats">
+
+<div class="stat">
+    <small>مشتریان</small>
+    <strong id="statCustomers">0</strong>
+</div>
+
+<div class="stat">
+    <small>کالاها</small>
+    <strong id="statProducts">0</strong>
+</div>
+
+<div class="stat">
+    <small>تعداد فروش</small>
+    <strong id="statSales">0</strong>
+</div>
+
+<div class="stat">
+    <small>مجموع فروش</small>
+    <strong id="statSalesAmount">0</strong>
+</div>
+
+<div class="stat">
+    <small>مجموع خرید</small>
+    <strong id="statPurchaseAmount">0</strong>
+</div>
+
+<div class="stat">
+    <small>هزینه‌ها</small>
+    <strong id="statExpenses">0</strong>
+</div>
+
+<div class="stat">
+    <small>سود تقریبی</small>
+    <strong id="statProfit">0</strong>
+</div>
+
+</div>
+
+<div class="card">
+    <h2>آخرین فروش‌ها</h2>
+    <div id="latestSales"></div>
+</div>
+
+</section>
+
+
+<!-- CUSTOMERS -->
+
+<section id="customers" class="page">
+
+<div class="card">
+<h2>ثبت مشتری</h2>
+
+<form onsubmit="addCustomer(event)">
+
+<div class="grid">
+
+<div>
+<label>نام مشتری</label>
+<input id="customerName" required>
+</div>
+
+<div>
+<label>شماره تماس</label>
+<input id="customerPhone">
+</div>
+
+<div>
+<label>آدرس</label>
+<input id="customerAddress">
+</div>
+
+</div>
+
+<button class="btn success">ثبت مشتری</button>
+
+</form>
+</div>
+
+<div class="card">
+
+<h2>لیست مشتریان</h2>
+
+<div class="search">
+<input id="customerSearch"
+       placeholder="جستجوی مشتری..."
+       oninput="renderCustomers()">
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>نام</th>
+<th>تماس</th>
+<th>آدرس</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="customersTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- PRODUCTS -->
+
+<section id="products" class="page">
+
+<div class="card">
+
+<h2>ثبت کالا</h2>
+
+<form onsubmit="addProduct(event)">
+
+<div class="grid">
+
+<div>
+<label>نام کالا</label>
+<input id="productName" required>
+</div>
+
+<div>
+<label>کد کالا</label>
+<input id="productCode">
+</div>
+
+<div>
+<label>قیمت فروش</label>
+<input id="productSalePrice" type="number" min="0" required>
+</div>
+
+<div>
+<label>قیمت خرید</label>
+<input id="productBuyPrice" type="number" min="0" required>
+</div>
+
+<div>
+<label>موجودی</label>
+<input id="productStock" type="number" min="0" value="0" required>
+</div>
+
+</div>
+
+<button class="btn success">ثبت کالا</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>موجودی کالا</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>نام</th>
+<th>کد</th>
+<th>قیمت فروش</th>
+<th>قیمت خرید</th>
+<th>موجودی</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="productsTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SALES -->
+
+<section id="sales" class="page">
+
+<div class="card">
+
+<h2>ثبت فاکتور فروش</h2>
+
+<form onsubmit="addSale(event)">
+
+<div class="grid">
+
+<div>
+<label>مشتری</label>
+<select id="saleCustomer" required></select>
+</div>
+
+<div>
+<label>کالا</label>
+<select id="saleProduct" onchange="fillSalePrice()" required></select>
+</div>
+
+<div>
+<label>تعداد</label>
+<input id="saleQty"
+       type="number"
+       min="1"
+       value="1"
+       required>
+</div>
+
+<div>
+<label>قیمت واحد</label>
+<input id="salePrice"
+       type="number"
+       min="0"
+       required>
+</div>
+
+<div>
+<label>روش پرداخت</label>
+<select id="salePayment">
+<option>نقدی</option>
+<option>بانکی</option>
+<option>نسیه</option>
+</select>
+</div>
+
+</div>
+
+<button class="btn success">ثبت فروش</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>فروش‌های ثبت‌شده</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>مشتری</th>
+<th>کالا</th>
+<th>تعداد</th>
+<th>قیمت</th>
+<th>کل</th>
+<th>پرداخت</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="salesTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- PURCHASES -->
+
+<section id="purchases" class="page">
+
+<div class="card">
+
+<h2>ثبت خرید</h2>
+
+<form onsubmit="addPurchase(event)">
+
+<div class="grid">
+
+<div>
+<label>فروشنده / شرکت</label>
+<input id="purchaseSupplier" required>
+</div>
+
+<div>
+<label>کالا</label>
+<select id="purchaseProduct" required></select>
+</div>
+
+<div>
+<label>تعداد</label>
+<input id="purchaseQty"
+       type="number"
+       min="1"
+       value="1"
+       required>
+</div>
+
+<div>
+<label>قیمت واحد</label>
+<input id="purchasePrice"
+       type="number"
+       min="0"
+       required>
+</div>
+
+</div>
+
+<button class="btn success">ثبت خرید</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>خریدهای ثبت‌شده</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>فروشنده</th>
+<th>کالا</th>
+<th>تعداد</th>
+<th>قیمت</th>
+<th>کل</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="purchasesTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- EXPENSES -->
+
+<section id="expenses" class="page">
+
+<div class="card">
+
+<h2>ثبت هزینه</h2>
+
+<form onsubmit="addExpense(event)">
+
+<div class="grid">
+
+<div>
+<label>عنوان هزینه</label>
+<input id="expenseTitle" required>
+</div>
+
+<div>
+<label>مبلغ</label>
+<input id="expenseAmount"
+       type="number"
+       min="0"
+       required>
+</div>
+
+<div>
+<label>دسته‌بندی</label>
+<select id="expenseCategory">
+<option>اجاره</option>
+<option>برق و آب</option>
+<option>حقوق</option>
+<option>حمل و نقل</option>
+<option>خرید اداری</option>
+<option>سایر</option>
+</select>
+</div>
+
+</div>
+
+<button class="btn success">ثبت هزینه</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>هزینه‌ها</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>عنوان</th>
+<th>دسته‌بندی</th>
+<th>مبلغ</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="expensesTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- REPORTS -->
+
+<section id="reports" class="page">
+
+<div class="card">
+
+<h2>گزارش مالی</h2>
+
+<div class="stats">
+
+<div class="stat">
+<small>کل فروش</small>
+<strong id="reportSales">0</strong>
+</div>
+
+<div class="stat">
+<small>کل خرید</small>
+<strong id="reportPurchases">0</strong>
+</div>
+
+<div class="stat">
+<small>کل هزینه</small>
+<strong id="reportExpenses">0</strong>
+</div>
+
+<div class="stat">
+<small>سود تقریبی</small>
+<strong id="reportProfit">0</strong>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>گزارش فروش</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>مشتری</th>
+<th>کالا</th>
+<th>مبلغ</th>
+</tr>
+</thead>
+
+<tbody id="reportSalesTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>پشتیبان‌گیری</h2>
+
+<p>
+برای نگهداری اطلاعات، از اطلاعات حساب‌یار پشتیبان بگیر.
+</p>
+
+<button class="btn"
+onclick="backupData()">
+💾 دانلود پشتیبان
+</button>
+
+<button class="btn gray"
+onclick="document.getElementById('restoreFile').click()">
+📂 بازگردانی
+</button>
+
+<input
+type="file"
+id="restoreFile"
+accept=".json"
+style="display:none"
+onchange="restoreData(event)"
+>
+
+</div>
+
+<div class="card">
+
+<h2>پاک کردن اطلاعات</h2>
+
+<p>
+⚠️ این گزینه تمام اطلاعات ذخیره
